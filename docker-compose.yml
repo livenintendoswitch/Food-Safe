@@ -10,6 +10,7 @@ services:
     volumes:
      - ./laravel:/app
      - /app/node_modules
+     - /app/vendor
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
