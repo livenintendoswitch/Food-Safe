@@ -12,4 +12,16 @@ class OrderPolicy
         return $order->customer_id === $user->id
             || $order->restaurant?->owner_id === $user->id;
     }
+
+    public function pay(User $user, Order $order): bool
+    {
+    return $user->role === 'customer'
+        && $order->customer_id === $user->id;
+    }
+
+    public function completePickup(User $user, Order $order): bool
+    {
+    return $user->role === 'partner'
+        && $order->restaurant?->owner_id === $user->id;
+    }
 }

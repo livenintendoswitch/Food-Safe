@@ -8,11 +8,14 @@ class OrderRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->role === 'customer';
     }
 
     public function rules(): array
     {
-        return [];
+        return [
+            'listing_id' => ['required', 'integer', 'exists:listings,id'],
+            'quantity' => ['required', 'integer', 'min:1'],
+        ];
     }
 }

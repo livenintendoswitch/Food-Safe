@@ -6,7 +6,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Keep this file as the central route entry point.
-// Domain-specific routes belong in customer.php and partner.php.
+Route::middleware('auth')->get('/dashboard', function () {
+    return view('customer.index');
+})->name('dashboard');
+
+require __DIR__.'/auth.php';
 require __DIR__.'/customer.php';
 require __DIR__.'/partner.php';
