@@ -2,18 +2,24 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Listing;
+use App\Models\User;
 
 class ListingPolicy
 {
+    /**
+     * Determine whether the user can update the listing.
+     */
     public function update(User $user, Listing $listing): bool
     {
-        return $listing->restaurant?->owner_id === $user->id;
+        return $user->id === $listing->restaurant->owner_id;
     }
 
+    /**
+     * Determine whether the user can delete the listing.
+     */
     public function delete(User $user, Listing $listing): bool
     {
-        return $this->update($user, $listing);
+        return $user->id === $listing->restaurant->owner_id;
     }
 }
