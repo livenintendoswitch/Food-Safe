@@ -3,45 +3,35 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Models\Listing;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ListingController
 {
-    public function home(): View
+    public function index(Request $request): View
     {
-        $listings = Listing::query()
-            ->with('restaurant')
+        // Combined logic: Checks both ACTIVE status and 'stock' column
+        $listings = Listing::with('restaurant')
             ->where('status', 'ACTIVE')
-            ->where('quantity', '>', 0)
-            ->latest()
-            ->take(6)
-            ->get();
-
-        return view('customer.discovery.home', compact('listings'));
-    }
-
-    public function index(): View
-    {
-        $listings = Listing::query()
-            ->with('restaurant')
-            ->where('status', 'ACTIVE')
-            ->where('quantity', '>', 0)
+            ->where('stock', '>', 0)
             ->latest()
             ->get();
 
-        return view('customer.discovery.listings', compact('listings'));
+        // Points to Frontend 1's flattened view
+        return view('customer.browse', compact('listings'));
     }
 
     public function show(Listing $listing): View
     {
         $listing->load('restaurant');
 
+        // Combined logic: Protects against direct URL access to empty/inactive stock
         abort_unless(
             $listing->status === 'ACTIVE'
-            && $listing->quantity > 0,
+            && $listing->stock > 0,
             404
         );
 
-        return view('customer.discovery.listing-detail', compact('listing'));
+        return view('customer.listing-detail', compact('listing'));
     }
 }
