@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restaurant;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class DashboardController
 {
-    public function __invoke(): View
+    public function __invoke(): View|RedirectResponse
     {
         $user = Auth::user();
 
@@ -20,6 +21,6 @@ class DashboardController
             return view('partner.dashboard', compact('restaurant'));
         }
 
-        return view('customer.index');
+        return redirect()->route('customer.discovery.home');
     }
 }

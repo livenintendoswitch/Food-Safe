@@ -12,7 +12,7 @@ services:
      - /app/node_modules
      - /app/vendor
     environment:
-      - APP_ENV=testing
+      - APP_ENV=local
       - APP_DEBUG=true
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
