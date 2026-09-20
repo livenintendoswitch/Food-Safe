@@ -1,9 +1,13 @@
 FROM php:8.4-apache
 
+# Added curl and Node.js to the installation
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
+    curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install pdo_mysql zip
@@ -20,7 +24,13 @@ WORKDIR /var/www/html
 
 COPY ./laravel/ .
 
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# forgot laravel uses node lmao
+RUN npm install
+RUN npm run build
+
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
