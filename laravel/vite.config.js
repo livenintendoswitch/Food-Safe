@@ -9,7 +9,7 @@ export default defineConfig({
            input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/Transaction/Checkout/checkout.js',
+                'resources/js/customer/discovery/listings.js',
                 'resources/js/customer/orders.js',
                 'resources/js/customer/pickup.js',
             ],

@@ -1,34 +1,41 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.querySelector('#listing-search');
     const filterButtons = document.querySelectorAll('.filter-button');
-    const cards = document.querySelectorAll('.food-card');
+    const grid = document.querySelector('.listing-grid');
+    const cards = grid ? Array.from(grid.querySelectorAll('.food-card')) : [];
 
-    if (!searchInput || cards.length === 0) {
+    if (!searchInput || !grid) {
         return;
     }
 
     let currentFilter = 'all';
+    const originalOrder = [...cards];
 
-    function updateListings() {
+    const applyListings = () => {
         const keyword = searchInput.value.toLowerCase().trim();
 
         cards.forEach((card) => {
-            const text = card.textContent.toLowerCase();
-            const matchesSearch = text.includes(keyword);
+            const matchesSearch = card.textContent
+                .toLowerCase()
+                .includes(keyword);
 
-            /*
-             * Filter-specific backend fields are not available yet.
-             * Do not independently calculate distance, price,
-             * pickup date, or availability in frontend.
-             */
-            const matchesFilter = currentFilter === 'all';
-
-            card.style.display =
-                matchesSearch && matchesFilter ? '' : 'none';
+            card.hidden = !matchesSearch;
         });
-    }
 
-    searchInput.addEventListener('input', updateListings);
+        if (currentFilter === 'cheapest') {
+            cards
+                .filter((card) => !card.hidden)
+                .sort(
+                    (a, b) =>
+                        Number(a.dataset.price) - Number(b.dataset.price),
+                )
+                .forEach((card) => grid.appendChild(card));
+        } else {
+            originalOrder.forEach((card) => grid.appendChild(card));
+        }
+    };
+
+    searchInput.addEventListener('input', applyListings);
 
     filterButtons.forEach((button) => {
         button.addEventListener('click', () => {
@@ -38,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             button.classList.add('active');
             currentFilter = button.dataset.filter;
-
-            updateListings();
+            applyListings();
         });
     });
 });

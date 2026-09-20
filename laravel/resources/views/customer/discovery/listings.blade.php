@@ -4,12 +4,8 @@
 <main class="discovery-page">
     <header class="page-header">
         <p class="home-eyebrow">Discover surplus food</p>
-
         <h1>Find your next meal.</h1>
-
-        <p>
-            Great food from local restaurants at a lower price.
-        </p>
+        <p>Great food from local restaurants at a lower price.</p>
     </header>
 
     <section class="discovery-toolbar">
@@ -37,25 +33,9 @@
             <button
                 type="button"
                 class="filter-button"
-                data-filter="nearest"
-            >
-                Nearest
-            </button>
-
-            <button
-                type="button"
-                class="filter-button"
                 data-filter="cheapest"
             >
-                Cheapest
-            </button>
-
-            <button
-                type="button"
-                class="filter-button"
-                data-filter="today"
-            >
-                Pickup today
+                Cheapest first
             </button>
         </div>
     </section>
@@ -65,6 +45,7 @@
             <a
                 href="{{ route('customer.discovery.show', $listing) }}"
                 class="food-card"
+                data-price="{{ (float) $listing->surplus_price }}"
             >
                 @if ($listing->image)
                     <img
@@ -93,9 +74,11 @@
                         </span>
                     </div>
 
-                    <p class="location-text">
-                        {{ $listing->restaurant?->address }}
-                    </p>
+                    @if ($listing->restaurant?->address)
+                        <p class="location-text">
+                            {{ $listing->restaurant->address }}
+                        </p>
+                    @endif
 
                     <div class="price-row">
                         <strong>
@@ -118,9 +101,7 @@
         @empty
             <div class="empty-listings">
                 <div class="empty-listings-icon">🍱</div>
-
                 <h3>No surplus food available</h3>
-
                 <p>Check back later for new food listings.</p>
             </div>
         @endforelse
@@ -129,5 +110,5 @@
 @endsection
 
 @push('scripts')
-    <script type="module" src="{{ Vite::asset('resources/js/customer/discovery/listings.js') }}"></script>
+    @vite('resources/js/customer/discovery/listings.js')
 @endpush

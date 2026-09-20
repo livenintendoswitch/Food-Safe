@@ -1,20 +1,24 @@
 <?php
 
 use App\Http\Controllers\Customer\ListingController;
-use App\Http\Controllers\Customer\PickupController;
-use App\Http\Controllers\Customer\PaymentController;
 use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\PaymentController;
+use App\Http\Controllers\Customer\PickupController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
-    Route::get('/discovery', [ListingController::class, 'home'])
-        ->name('customer.discovery.home');
+Route::prefix('discovery')
+    ->name('customer.discovery.')
+    ->group(function () {
+        Route::get('/', [ListingController::class, 'home'])
+            ->name('home');
 
-    Route::get('/discovery/listings', [ListingController::class, 'index'])
-        ->name('customer.discovery.listings');
+        Route::get('/listings', [ListingController::class, 'index'])
+            ->name('listings');
 
-    Route::get('/discovery/listings/{listing}', [ListingController::class, 'show'])
-        ->name('customer.discovery.show');
+        Route::get('/listings/{listing}', [ListingController::class, 'show'])
+            ->name('show');
+    });
+
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])
         ->name('customer.orders');

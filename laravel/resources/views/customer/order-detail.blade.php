@@ -1,87 +1,114 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-    
-    <div class="flex items-center mb-6">
-        <a href="{{ route('customer.orders') }}" class="text-green-600 hover:text-green-700 mr-4">
+<div class="container mx-auto max-w-2xl px-4 py-8">
+    <div class="mb-6 flex items-center">
+        <a
+            href="{{ route('customer.orders') }}"
+            class="mr-4 text-green-600 hover:text-green-700"
+        >
             &larr; Back to Orders
         </a>
+
         <h1 class="text-2xl font-bold text-gray-800">Order Details</h1>
     </div>
 
-    <!-- Backend Error/Success States -->
-    @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            {{ session('error') }}
+    @error('order')
+        <div class="mb-6 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+            {{ $message }}
         </div>
-    @endif
+    @enderror
 
-    <div class="bg-white shadow-md rounded-lg p-6 border border-gray-200">
-        
-        <!-- Header Info -->
-        <div class="border-b border-gray-200 pb-4 mb-4 flex justify-between items-start">
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+        <div class="mb-4 flex items-start justify-between border-b border-gray-200 pb-4">
             <div>
-                <p class="text-sm text-gray-500 font-bold mb-1">Order #{{ $order->order_number ?? $order->id }}</p>
-                <p class="text-xs text-gray-400">Placed on {{ $order->created_at->format('d M Y, H:i') }}</p>
+                <p class="mb-1 text-sm font-bold text-gray-500">
+                    Order #{{ $order->id }}
+                </p>
+
+                <p class="text-xs text-gray-400">
+                    Placed on {{ $order->created_at->format('d M Y, H:i') }}
+                </p>
             </div>
-            <div class="text-right space-y-1">
-                <div class="px-3 py-1 text-xs font-semibold rounded-full inline-block
-                    {{ $order->payment_status === 'PAID' ? 'bg-green-100 text-green-800' : 
-                      ($order->payment_status === 'FAILED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+
+            <div class="space-y-2 text-right">
+                <span class="inline-block rounded-full px-3 py-1 text-xs font-semibold
+                    {{ $order->payment_status === 'PAID'
+                        ? 'bg-green-100 text-green-800'
+                        : ($order->payment_status === 'FAILED'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800') }}">
                     Payment: {{ $order->payment_status }}
-                </div>
-                <div class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 inline-block block mt-2">
-                    Status: {{ $order->status }}
-                </div>
+                </span>
+
+                <span class="block rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800">
+                    Status: {{ $order->order_status }}
+                </span>
             </div>
         </div>
 
-        <!-- Order Items & Total -->
         <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-3">Order Summary</h2>
-            <div class="flex justify-between items-center mb-2">
-                <div>
-                    <p class="font-medium text-gray-800">{{ $order->listing->food_name }} (x{{ $order->quantity }})</p>
-                    <p class="text-sm text-gray-600">{{ $order->listing->restaurant->name }}</p>
-                </div>
-            </div>
-            
-            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+            <h2 class="mb-3 text-lg font-semibold text-gray-800">Order Summary</h2>
+
+            <p class="font-medium text-gray-800">
+                {{ $order->listing?->name ?? '-' }} (x{{ $order->quantity }})
+            </p>
+
+            <p class="text-sm text-gray-600">
+                {{ $order->restaurant?->name ?? '-' }}
+            </p>
+
+            <div class="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
                 <span class="font-bold text-gray-800">Total Price</span>
-                <span class="text-xl font-bold text-green-600">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                <span class="text-xl font-bold text-green-600">
+                    Rp{{ number_format($order->total_price, 0, ',', '.') }}
+                </span>
             </div>
         </div>
 
-        <!-- Pickup Information -->
-        <div class="mb-8 bg-gray-50 p-4 rounded-md border border-gray-100">
-            <h2 class="text-sm font-bold text-gray-700 uppercase mb-2">Pickup Information</h2>
-            <p class="text-gray-800"><span class="font-medium">Restaurant:</span> {{ $order->listing->restaurant->name }}</p>
-            <p class="text-gray-800 mt-1"><span class="font-medium">Pickup Window:</span> {{ $order->listing->pickup_window }}</p>
+        <div class="mb-8 rounded-md border border-gray-100 bg-gray-50 p-4">
+            <h2 class="mb-2 text-sm font-bold uppercase text-gray-700">
+                Pickup Information
+            </h2>
+
+            <p class="text-gray-800">
+                <span class="font-medium">Restaurant:</span>
+                {{ $order->restaurant?->name ?? '-' }}
+            </p>
+
+            <p class="mt-1 text-gray-800">
+                <span class="font-medium">Pickup Window:</span>
+                {{ $order->listing?->pickup_start?->format('d M Y, H:i') ?? '-' }}
+                –
+                {{ $order->listing?->pickup_end?->format('H:i') ?? '-' }}
+            </p>
         </div>
 
-        <!-- Next Actions (Handled via Backend standard routing) -->
         <div class="flex justify-end">
-            @if($order->payment_status === 'PENDING')
-                <!-- Assume backend has a payment processing route setup -->
-                <form action="{{ route('customer.orders.payment', $order->id) }}" method="POST">
+            @if ($order->payment_status === 'PENDING')
+                <form action="{{ route('customer.orders.payment', $order) }}" method="POST">
                     @csrf
-                    <button type="submit" class="px-6 py-2 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 transition-colors">
+
+                    <button
+                        type="submit"
+                        class="rounded-md bg-green-600 px-6 py-2 font-bold text-white hover:bg-green-700"
+                    >
                         Proceed to Payment
                     </button>
                 </form>
-            @elseif($order->payment_status === 'PAID' && $order->status !== 'COMPLETED' && $order->status !== 'CANCELLED')
-                <!-- Proceed to Pickup Code screen -->
-                <a href="{{ route('customer.orders.pickup', $order->id) }}" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-colors">
+            @elseif ($order->payment_status === 'PAID' && $order->order_status !== 'COMPLETED')
+                <a
+                    href="{{ route('customer.orders.pickup', $order) }}"
+                    class="rounded-md bg-blue-600 px-6 py-2 font-bold text-white hover:bg-blue-700"
+                >
                     View Pickup Code
                 </a>
-            @elseif($order->status === 'COMPLETED')
-                <span class="px-6 py-2 bg-gray-100 text-gray-500 font-bold rounded-md">
+            @elseif ($order->order_status === 'COMPLETED')
+                <span class="rounded-md bg-gray-100 px-6 py-2 font-bold text-gray-500">
                     Order Completed
                 </span>
             @endif
         </div>
-
     </div>
 </div>
 @endsection
