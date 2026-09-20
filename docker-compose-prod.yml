@@ -1,20 +1,20 @@
 services:
-  FoodSafe-app:
+  foodsafe-app:
     build:
       context: .
       dockerfile: dockerfile
-    container_name: FoodSafe-app
+    container_name: foodsafe-app
     restart: unless-stopped
     ports:
       - "8000:80"
     volumes:
       - ${HOME}/venture-food-app/.env:/var/www/html/.env
     depends_on:
-      - FoodSafe-mysql
+      - foodsafe-mysql
 
-  FoodSafe-mysql:
+  foodsafe-mysql:
     image: mysql:latest
-    container_name: FoodSafe-mysql
+    container_name: foodsafe-mysql
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -22,7 +22,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
-          - mysql_prod_data:/var/lib/mysql
+      - mysql_prod_data:/var/lib/mysql
 
 volumes:
   mysql_prod_data:
