@@ -21,8 +21,8 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-  volumes:
-    - ${HOME}/venture-food-app/.env:/var/www/html/.env
+    volumes:
+          - mysql_prod_data:/var/lib/mysql
 
 volumes:
   mysql_prod_data:
