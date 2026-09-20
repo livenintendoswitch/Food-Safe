@@ -65,6 +65,45 @@
                     </strong>
                 </div>
             </div>
+
+            @if ($listing->isAvailable())
+                @guest
+                    <div class="order-cta">
+                        <a href="{{ route('login') }}" class="order-submit">
+                            Log in to order
+                        </a>
+                    </div>
+                @else
+                    @if (auth()->user()->role === 'customer')
+                        <form method="POST" action="{{ route('customer.orders.store') }}" class="order-cta">
+                            @csrf
+                            <input type="hidden" name="listing_id" value="{{ $listing->id }}">
+
+                            <div>
+                                <label for="order-quantity">Quantity</label>
+                                <input
+                                    id="order-quantity"
+                                    class="order-quantity"
+                                    type="number"
+                                    name="quantity"
+                                    min="1"
+                                    max="{{ $listing->quantity }}"
+                                    value="1"
+                                    required
+                                >
+                            </div>
+
+                            <button type="submit" class="order-submit">
+                                Continue to order
+                            </button>
+                        </form>
+                    @else
+                        <div class="order-cta" role="status">
+                            <p>Only customer accounts can place orders.</p>
+                        </div>
+                    @endif
+                @endguest
+            @endif
         </div>
     </article>
 </main>
