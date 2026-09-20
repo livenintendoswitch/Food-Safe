@@ -1,8 +1,15 @@
 <?php
 
+use App\Http\Controllers\Customer\ListingController;
 use Illuminate\Support\Facades\Route;
 
-// Customer routes. Backend 2 owns this file.
 Route::middleware('auth')->group(function () {
-    // Route::get('/orders', [OrderController::class, 'index'])->name('customer.orders');
+    Route::get('/discovery', [ListingController::class, 'home'])
+        ->name('customer.discovery.home');
+
+    Route::get('/discovery/listings', [ListingController::class, 'index'])
+        ->name('customer.discovery.listings');
+
+    Route::get('/discovery/listings/{listing}', [ListingController::class, 'show'])
+        ->name('customer.discovery.show');
 });
