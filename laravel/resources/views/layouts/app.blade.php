@@ -31,5 +31,6 @@
     @endif
     {{ $slot ?? '' }}
     @yield('content')
+    @stack('scripts')
 </body>
 </html>

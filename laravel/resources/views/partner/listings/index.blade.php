@@ -8,16 +8,30 @@
     </div>
     <div class="space-y-3">
         @forelse ($listings ?? [] as $listing)
+            @php
+                $statusClasses = [
+                    'ACTIVE' => 'bg-green-100 text-green-700',
+                    'DRAFT' => 'bg-gray-100 text-gray-600',
+                    'SOLD_OUT' => 'bg-red-100 text-red-700',
+                    'EXPIRED' => 'bg-yellow-100 text-yellow-700',
+                ];
+            @endphp
             <div class="border rounded p-4 flex justify-between items-center">
                 <div>
                     <p class="font-medium">{{ $listing->name }}</p>
                     <p class="text-sm text-gray-500">Rp{{ number_format($listing->surplus_price, 0, ',', '.') }} · pickup {{ $listing->pickup_start?->format('d M H:i') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="text-xs px-2 py-1 rounded {{ $listing->status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                    <span class="text-xs px-2 py-1 rounded {{ $statusClasses[$listing->status] ?? 'bg-gray-100 text-gray-600' }}">
                         {{ $listing->status }} · {{ $listing->quantity }} left
                     </span>
                     <a href="{{ route('partner.listings.edit', $listing) }}" class="text-sm underline">Edit</a>
+                    <form method="POST" action="{{ route('partner.listings.destroy', $listing) }}"
+                          onsubmit="return confirm('Delete this listing? This cannot be undone.');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-sm text-red-600 underline">Delete</button>
+                    </form>
                 </div>
             </div>
         @empty
