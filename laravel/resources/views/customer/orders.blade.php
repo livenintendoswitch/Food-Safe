@@ -1,3 +1,5 @@
+@extends('layouts.app')
+
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-4xl">
     <h1 class="text-2xl font-bold mb-6 text-gray-800">My Orders</h1>
@@ -57,5 +59,5 @@
 @endsection
 
 @push('scripts')
-    @vite('resources/js/customer/orders.js')
+     @vite('resources/js/customer/orders.js') 
 @endpush
