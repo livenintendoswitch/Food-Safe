@@ -25,7 +25,7 @@ WORKDIR /var/www/html
 COPY ./laravel/ .
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --optimize-autoloader
 
 # forgot laravel uses node lmao
 RUN npm install
