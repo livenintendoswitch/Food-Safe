@@ -14,6 +14,12 @@
                 Discover delicious surplus food from restaurants near you.
             </p>
         </div>
+
+        @guest
+            <a href="{{ route('login') }}" class="discovery-login-button">
+                Log in
+            </a>
+        @endguest
     </header>
 
     <section class="search-section">
