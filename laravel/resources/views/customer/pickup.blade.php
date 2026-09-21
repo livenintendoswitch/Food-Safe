@@ -28,7 +28,7 @@
             </span>
 
             <div class="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6">
-                <span class="block text-5xl font-extrabold tracking-widest text-gray-800">
+                <span class="pickup-code">
                     {{ $order->pickup_code }}
                 </span>
             </div>

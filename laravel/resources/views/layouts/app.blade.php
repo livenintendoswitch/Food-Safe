@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Surplus Food Marketplace' }}</title>
+    <title>{{ $title ?? 'Food Safe' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50 text-gray-900">
         @auth
         <nav class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center">
-            <span class="font-bold">Surplus Food</span>
+            <a
+                href="{{ route('customer.discovery.home') }}"
+                class="font-bold text-white no-underline"
+            >
+                FoodSafe
+            </a>
             <div class="flex gap-4 text-sm">
                 @if ((auth()->user()->role ?? null) === 'partner')
                     <a href="{{ route('partner.restaurants.index') }}">Restaurant</a>
                     <a href="{{ route('partner.listings.index') }}">Listings</a>
                     <a href="{{ route('partner.orders') }}">Orders</a>
+                @elseif ((auth()->user()->role ?? null) === 'customer')
+                    <a href="{{ route('customer.orders') }}">Purchase History</a>
                 @endif
+                <span class="text-gray-300">
+                    {{ auth()->user()->name }}
+                    <span class="text-gray-500">
+                        ({{ ucfirst(auth()->user()->role) }})
+                    </span>
+                </span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit">Logout</button>
